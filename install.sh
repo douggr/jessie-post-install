@@ -63,15 +63,19 @@ ask () {
   read CONFIRM
 }
 
+bail () {
+  log_failure_msg && exit 0
+}
+
 ## (command, message)
 run_command () {
-  eval $1 && log_success_msg || log_failure_msg && exit 0
+  eval $1 && log_success_msg || bail
 }
 
 ## (command, package, message)
 apt_get () {
   log_begin_msg $3
-  apt-get -qq -y $1 $2 >&/dev/null && log_success_msg || log_failure_msg && exit 0
+  apt-get -qq -y $1 $2 >&/dev/null && log_success_msg || bail
 }
 
 install_package () {
@@ -95,7 +99,11 @@ finish_install () {
 
 ## Begin the magic
 cp -R etc/apt/* /etc/apt/
-apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886
+
+if ! apt-key list | grep EEA14886; then
+  apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886 >&/dev/null
+fi
+
 apt_get update "" "Updating apt sources and settings"
 apt_get upgrade "" "Upgrading installed packages"
 
