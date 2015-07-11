@@ -36,7 +36,7 @@ export DISPLAY LANGUAGE LC_ALL
 . /lib/lsb/init-functions
 
 ## Requires `root`
-if [ "$(id -u)" = "0" ]; then
+if [ "$(id -u)" != "0" ]; then
 	log_failure_msg "Must be run as root"
 	exit 1
 fi
@@ -63,28 +63,45 @@ ask () {
   read CONFIRM
 }
 
+bail () {
+  log_failure_msg && exit 0
+}
+
+## (command, message)
+run_command () {
+  eval $1 && log_success_msg || bail
+}
+
+## (command, package, message)
+apt_get () {
+  log_begin_msg $3
+  apt-get -qq -y $1 $2 >&/dev/null && log_success_msg || bail
+}
+
 install_package () {
-  log_begin_msg "Installing $1"
-  apt-get install -y -qq $1 && log_success_msg || log_failure_msg
+  if ! package_check_install $PKGNAME; then
+    apt_get install $1 "Installing $1"
+  fi
 }
 
 finish_install () {
   echo 1024 > /sys/block/sda/queue/read_ahead_kb
   echo 256  > /sys/block/sda/queue/nr_requests
 
-  apt-get purge $(dpkg --get-selections | grep blue | cut -f 1) busybox
-  apt-get autoremove --purge
+  log_begin_msg "Cleaning up"
+  apt-get purge $(dpkg --get-selections | grep blue | cut -f 1) busybox -qq -y >&/dev/null
+  log_success_msg
+  apt_get autoremove "--purge" "Cleaning unused packages"
   apt-get clean
 
   exit $?
 }
 
 ## Begin the magic
-log_begin_msg "Updating apt-get sources and settings"
 cp -R etc/apt/* /etc/apt/
-apt-get update  -y -qq
-apt-get upgrade -y -qq
-log_success_msg
+apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886
+apt_get update "" "Updating apt sources and settings"
+apt_get upgrade "" "Upgrading installed packages"
 
 ## Install base libraries
 for PACKAGE in $(cat packages/base); do
@@ -93,8 +110,7 @@ done
 
 ## java
 ask "Would you like to install java packages"
-if [ "$CONFIRM" != "y" ]; then
-  apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886
+if [ "$CONFIRM" = "y" ]; then
   install_package oracle-java8-installer
 fi
 
@@ -108,12 +124,12 @@ for PACKAGE in $(cat packages/xfce); do
 done
 
 ask "Would you like to install Google Chrome over Chromium"
-if [ "$CONFIRM" != "y" ]; then
-  wget \
+if [ "$CONFIRM" = "y" ]; then
+  wget -q \
     https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
     -O /tmp/chrome.deb
 
-  dpkg -i /tmp/chrome.deb
+  run_command "dpkg -i /tmp/chrome.deb" "Installing Google Chrome"
 else
   install_package chromium
 fi
