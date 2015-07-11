@@ -63,19 +63,15 @@ ask () {
   read CONFIRM
 }
 
-bail () {
-  log_failure_msg && exit 0
-}
-
 ## (command, message)
 run_command () {
-  eval $1 && log_success_msg || bail
+  eval $1 && log_success_msg || log_failure_msg && exit 0
 }
 
 ## (command, package, message)
 apt_get () {
   log_begin_msg $3
-  apt-get -qq -y $1 $2 >&/dev/null && log_success_msg || bail
+  apt-get -qq -y $1 $2 >&/dev/null && log_success_msg || log_failure_msg && exit 0
 }
 
 install_package () {
