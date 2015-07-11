@@ -75,8 +75,12 @@ run_command () {
 ## (command, package, message)
 apt_get () {
   log_begin_msg "$3"
+  OUTPUT="2>/dev/null"
+  if [ "install" = "$1" ]; then
+    OUTPUT=">&/dev/null"
+  fi
 
-  if ! apt-get -qq -y $1 $2 2>/dev/null; then
+  if ! apt-get -qq -y $1 $2 $OUTPUT; then
     log_failure_msg
     exit 0
   fi
@@ -86,6 +90,8 @@ apt_get () {
 install_package () {
   if ! package_check_install $PKGNAME; then
     apt_get install $1 "Installing $1"
+  else
+    log_success_msg
   fi
 }
 
