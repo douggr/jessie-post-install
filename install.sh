@@ -44,7 +44,7 @@ fi
 ## Check required package
 package_check_install () {
   log_begin_msg "Checking for $1 "
-  dpkg-query -W -f='(>= ${Version})' $1 2>/dev/null
+  dpkg-query -W -f='${Version}' $1 2>/dev/null
 }
 
 log_action_msg "Checking for required packages"
@@ -77,23 +77,19 @@ apt_get () {
   log_begin_msg "$3"
   OUTPUT="2>/dev/null"
   if [ "install" = "$1" ]; then
-    OUTPUT=">&/dev/null"
+    OUTPUT="1>/dev/null"
   fi
 
   eval "apt-get -qq -y $1 $2 $OUTPUT"
   if [ "0" != "$?" ]; then
     log_failure_msg
-    exit 0
+    exit 1
   fi
   log_success_msg
 }
 
 install_package () {
-  if ! package_check_install $1; then
-    apt_get install $1 "Installing $1"
-  else
-    log_success_msg
-  fi
+  apt_get install $1 "Installing $1"
 }
 
 finish_install () {
@@ -120,7 +116,7 @@ apt_get update "" "Updating apt sources and settings"
 apt_get upgrade "" "Upgrading installed packages"
 
 ## Install base libraries
-for PACKAGE in $(cat packages/base); do
+for PACKAGE in $(cat packages/base | grep -v '#'); do
   install_package $PACKAGE
 done
 
@@ -135,7 +131,7 @@ if [ "$CONFIRM" != "y" ]; then
   finish_install
 fi
 
-for PACKAGE in $(cat packages/xfce); do
+for PACKAGE in $(cat packages/xfce | grep -v '#'); do
   install_package $PACKAGE
 done
 
