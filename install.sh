@@ -100,7 +100,7 @@ finish_install () {
 ## Begin the magic
 cp -R etc/apt/* /etc/apt/
 
-if ! apt-key list | grep EEA14886; then
+if [ "" = "$(apt-key list | grep EEA14886)" ]; then
   apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886 >&/dev/null
 fi
 
