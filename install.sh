@@ -80,7 +80,8 @@ apt_get () {
     OUTPUT=">&/dev/null"
   fi
 
-  if ! apt-get -qq -y $1 $2 $OUTPUT; then
+  eval "apt-get -qq -y $1 $2 $OUTPUT"
+  if [ "0" != "$?" ]; then
     log_failure_msg
     exit 0
   fi
