@@ -1,0 +1,26 @@
+#
+# Debian “jessie”
+# https://debian.org/releases/stable/releasenotes
+
+deb http://httpredir.debian.org/debian jessie main contrib non-free
+# deb-src http://httpredir.debian.org/debian jessie main contrib non-free
+deb http://security.debian.org/ jessie/updates main contrib non-free
+# deb-src http://security.debian.org jessie/updates main contrib non-free
+deb http://httpredir.debian.org/debian jessie-updates main contrib non-free
+# deb-src http://httpredir.debian.org/debian jessie-updates main contrib non-free
+
+#
+# Backports cannot be tested as extensively as Debian stable, and backports are
+# provided on an as-is basis, with risk of incompatibilities with other
+# components in Debian stable. Use with care!
+
+deb http://http.debian.net/debian jessie-backports main contrib non-free
+# deb-src http://http.debian.net/debian jessie-backports main contrib non-free
+
+#
+# Please note that security updates for "testing" distribution are not yet
+# managed by the security team. Hence, "testing" does not get security updates
+# in a timely manner.
+
+deb http://debian.pop-sc.rnp.br/debian testing main contrib non-free
+# deb-src http://debian.pop-sc.rnp.br/debian testing main contrib non-free

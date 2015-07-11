@@ -1,0 +1,56 @@
+# XFCE 4.12 (only in testing as of 2015, July)
+
+# If used with tasksel
+Package: task-xfce-desktop
+Pin: release testing
+Pin-Priority: 990
+
+# Main Files, Development Tools and Plugins
+Package: xfce4 xfce4-* xfce-keyboard-shortcuts xfswitch-plugin
+Pin: release testing
+Pin-Priority: 990
+
+# Configuration Manager
+Package: xfconf libxfconf*
+Pin: release testing
+Pin-Priority: 990
+
+# Menu Library (garcon)
+Package: libgarcon*
+Pin: release testing
+Pin-Priority: 990
+
+# Extension Library (exo)
+Package: exo-utils exo-utils-dbg libexo-*
+Pin: release testing
+Pin-Priority: 990
+
+# Widget Library and Utility Library
+Package: libxfce4panel-* libxfce4ui-* libxfcegui4-* libxfce4util*
+Pin: release testing
+Pin-Priority: 990
+
+# File Manager
+Package: thunar* libthunar*
+Pin: release testing
+Pin-Priority: 990
+
+# Desktop and Window Managers
+Package: xfdesktop4 xfdesktop4-* xfwm4 xfwm4-*
+Pin: release testing
+Pin-Priority: 990
+
+# Theme Engines
+Package: gtk2-engines-xfce gtk3-engines-xfce
+Pin: release testing
+Pin-Priority: 990
+
+# Thumbnail Generator (tumbler)
+Package: tumbler tumbler-* libtumbler-*
+Pin: release testing
+Pin-Priority: 990
+
+# Applications
+Package: orage xfburn mousepad parole parole-dev ristretto
+Pin: release testing
+Pin-Priority: 990
