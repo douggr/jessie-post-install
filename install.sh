@@ -75,12 +75,8 @@ run_command () {
 ## (command, package, message)
 apt_get () {
   log_begin_msg "$3"
-  OUTPUT="2>/dev/null"
-  if [ "install" = "$1" ]; then
-    OUTPUT="1>/dev/null"
-  fi
 
-  eval "apt-get -qq -y $1 $2 $OUTPUT"
+  eval "apt-get -qq -y $1 $2"
   if [ "0" != "$?" ]; then
     log_failure_msg
     exit 1
@@ -123,6 +119,7 @@ done
 ## java
 ask "Would you like to install java packages"
 if [ "$CONFIRM" = "y" ]; then
+  echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections
   install_package oracle-java8-installer
 fi
 
@@ -137,9 +134,11 @@ done
 
 ask "Would you like to install Google Chrome over Chromium"
 if [ "$CONFIRM" = "y" ]; then
+  log_begin_msg "Downloading google-chrome-stable_current_amd64.deb"
   wget -q \
     https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
     -O /tmp/chrome.deb
+  log_success_msg
 
   run_command "dpkg -i /tmp/chrome.deb" "Installing Google Chrome"
 else
