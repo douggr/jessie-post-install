@@ -64,7 +64,7 @@ ask () {
 }
 
 bail () {
-  log_failure_msg && exit 0
+  log_failure_msg && exit 1
 }
 
 ## (command, message)
@@ -74,8 +74,13 @@ run_command () {
 
 ## (command, package, message)
 apt_get () {
-  log_begin_msg $3
-  apt-get -qq -y $1 $2 >&/dev/null && log_success_msg || bail
+  log_begin_msg "$3"
+
+  if ! apt-get -qq -y $1 $2 2>/dev/null; then
+    log_failure_msg
+    exit 0
+  fi
+  log_success_msg
 }
 
 install_package () {
@@ -88,9 +93,7 @@ finish_install () {
   echo 1024 > /sys/block/sda/queue/read_ahead_kb
   echo 256  > /sys/block/sda/queue/nr_requests
 
-  log_begin_msg "Cleaning up"
-  apt-get purge $(dpkg --get-selections | grep blue | cut -f 1) busybox -qq -y >&/dev/null
-  log_success_msg
+  apt_get purge "$(dpkg --get-selections | grep blue | cut -f 1) busybox -qq" "Cleaning up"
   apt_get autoremove "--purge" "Cleaning unused packages"
   apt-get clean
 
