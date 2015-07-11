@@ -89,7 +89,7 @@ apt_get () {
 }
 
 install_package () {
-  if ! package_check_install $PKGNAME; then
+  if ! package_check_install $1; then
     apt_get install $1 "Installing $1"
   else
     log_success_msg
