@@ -100,8 +100,10 @@ finish_install () {
 ## Begin the magic
 cp -R etc/apt/* /etc/apt/
 
-if [ "" = "$(apt-key list | grep EEA14886)" ]; then
-  apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886 >&/dev/null
+LAUNCHPADKEY="EEA14886"
+LAUNCHPADCKH=$(apt-key list | grep $LAUNCHPADKEY)
+if [ "0" != "$?" ]; then
+  apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys $LAUNCHPADKEY
 fi
 
 apt_get update "" "Updating apt sources and settings"
