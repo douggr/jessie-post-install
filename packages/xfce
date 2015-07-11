@@ -26,6 +26,8 @@ xfce4-terminal
 xfce4-volumed
 xfdesktop4
 xfwm4
-xorg
+xserver-xorg-core
+xserver-xorg-input-all
+xserver-xorg-video-fbdev
 xserver-xorg-video-ati
 xserver-xorg-video-intel
