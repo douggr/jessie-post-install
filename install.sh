@@ -108,6 +108,10 @@ if [ "0" != "$?" ]; then
   apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys $LAUNCHPADKEY
 fi
 
+if ! package_check_install deb-multimedia-keyring; then
+	wget http://www.deb-multimedia.org/pool/main/d/deb-multimedia-keyring/deb-multimedia-keyring_2015.6.1_all.deb
+fi
+
 apt_get update "" "Updating apt sources and settings"
 apt_get upgrade "" "Upgrading installed packages"
 
