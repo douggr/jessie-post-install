@@ -1,7 +1,3 @@
-xserver-xorg-core
-xserver-xorg-input-all
-xserver-xorg-video-ati
-xserver-xorg-video-intel
 alsa-utils
 dmz-cursor-theme
 faenza-icon-theme
@@ -29,3 +25,7 @@ xfce4-terminal
 xfce4-volumed
 xfdesktop4
 xfwm4
+xserver-xorg-core
+xserver-xorg-input-all
+xserver-xorg-video-ati
+xserver-xorg-video-intel
