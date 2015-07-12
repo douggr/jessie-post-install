@@ -1,23 +1,28 @@
 ## tl;dr;
- - Install a clean [Debian](https://debian.org) jessie copy,
- - Install `git` and `ca-certificates` with
-  `$ apt-get install git ca-certificates --no-install-recommends`,
- - clone `git clone https://github.com/douggr/jessie-post-install` or
-  [download](https://github.com/douggr/jessie-post-install/archive/master.zip)
-  this repository,
- - If you'd choose to download instead of cloning you'll need to install
-  `unzip` with `$ apt-get install unzip --no-install-recommends`,
- - unzip it `unzip master.zip` and cd to the new directory
- - execute `./install.sh` and reboot your system
+  - Install a clean [Debian](https://debian.org) jessie copy
+  - Install `git` and `ca-certificates` with
+    `$ apt-get install git ca-certificates --no-install-recommends`
+  - clone `git clone https://github.com/douggr/jessie-post-install` or
+    [download](https://github.com/douggr/jessie-post-install/archive/master.zip)
+    this repository
+  - If you'd choose to download instead of cloning you'll need to install
+    `unzip` with `$ apt-get install unzip --no-install-recommends`
+    - unzip it `unzip master.zip`
+  - cd to the new directory
+  - execute `./install.sh` and reboot your system
 
 ## Notes
-  - This will add *--no-install-recommends* to your apt preferences
+  - This will add `--no-install-recommends` to your apt preferences
+  - *This program will **overwrite** your sources.list*
   - Two new repositories will be added:
-    - deb-multimedia.org (see
-      [etc/sources.list.d/deb-multimedia.list](https://github.com/douggr/jessie-post-install/blob/master/etc/apt/sources.list.d/deb-multimedia.list))
-    - ppa.launchpad.net (see
-      [etc/sources.list.d/webupd8team-java.list](https://github.com/douggr/jessie-post-install/blob/master/etc/apt/sources.list.d/webupd8team-java.list))
-  - There's an option to install the following packages:
+    - deb-multimedia.org
+     (see [etc/sources.list.d/deb-multimedia.list](http://git.io/vmvUt))
+    - ppa.launchpad.net
+     (see [etc/sources.list.d/webupd8team-java.list](http://git.io/vmvUs))
+  - Optionally you can add a minimal Xorg install with
+    - Xfce 4.12 from *testing* with few plugins (*stable* provides 4.10)
+    - Slim (desktop-independent graphical login manager for X11)
+  - There are options to install the following packages:
     - Oracle Java binaries
     - VirtualBox
     - Google Chrome (over Chromium)
@@ -52,7 +57,7 @@ In the case you don't want any package, just comment it (with `#`) in
  - **usbmount:** automatically mount and unmount USB mass storage devices
  - **xz-utils:** XZ-format compression utilities
 
-### Desktop
+### Desktop (optional)
  - **alsa-utils:** Utilities for configuring and using ALSA
  - **dmz-cursor-theme:** Style neutral, scalable cursor theme
  - **faenza-icon-theme:** Faenza icon theme
