@@ -1,6 +1,7 @@
 bash-completion
 bzip2
 ca-certificates
+colordiff
 curl
 docker.io
 firmware-linux-nonfree
