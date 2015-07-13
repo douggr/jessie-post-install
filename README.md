@@ -13,7 +13,7 @@
 
 ## Notes
   - This will add `--no-install-recommends` to your apt preferences
-  - *This program will **overwrite** your sources.list*
+  - *This program will overwrite your sources.list*
   - Two new repositories will be added:
     - deb-multimedia.org
      (see [etc/sources.list.d/deb-multimedia.list](http://git.io/vmvUt))
