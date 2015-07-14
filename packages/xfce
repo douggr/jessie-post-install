@@ -5,6 +5,7 @@ xserver-xorg-video-intel
 alsa-utils
 dmz-cursor-theme
 faenza-icon-theme
+fonts-roboto
 gconf2
 gtk2-engines-murrine
 gtk2-engines-pixbuf
