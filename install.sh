@@ -120,6 +120,13 @@ for PACKAGE in $(cat packages/base | grep -v '#'); do
   install_package $PACKAGE
 done
 
+## build-essential
+echo "build-essential is used by a variety of node and ruby packages"
+ask "Would you like to add build-essential"
+if [ "$CONFIRM" = "y" ]; then
+  install_package build-essential
+fi
+
 ## java
 ask "Would you like to install java packages"
 if [ "$CONFIRM" = "y" ]; then
