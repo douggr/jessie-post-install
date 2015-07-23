@@ -1,7 +1,7 @@
 # XFCE 4.12 (only in testing as of 2015, July)
 
 # If used with tasksel
-Package: task-xfce-desktop
+Package: tasksel tasksel-* task-*
 Pin: release testing
 Pin-Priority: 990
 
@@ -51,6 +51,6 @@ Pin: release testing
 Pin-Priority: 990
 
 # Applications
-Package: orage xfburn mousepad parole parole-dev ristretto
+Package: orage xfburn mousepad parole parole-* ristretto
 Pin: release testing
 Pin-Priority: 990
