@@ -7,7 +7,6 @@ docker.io
 firmware-linux-nonfree
 firmware-realtek
 git
-gnupg-agent
 ntfs-3g
 openssh-server
 patch
@@ -16,5 +15,4 @@ secure-delete
 subversion
 tlp
 unzip
-usbmount
 xz-utils
