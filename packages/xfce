@@ -16,7 +16,7 @@ libappindicator1
 libgl1-mesa-dri
 mousepad
 ristretto
-slim
+lightdm
 thunar
 xfce4-appfinder
 xfce4-datetime-plugin
