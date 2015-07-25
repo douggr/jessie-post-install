@@ -38,7 +38,6 @@ gstreamer1.0-plugins-good # GStreamer plugins from the "good" set
 gstreamer1.0-plugins-ugly # GStreamer plugins from the "ugly" set
 gstreamer1.0-x # GStreamer plugins for X11 and Pango
 gtk2-engines-murrine # cairo-based gtk+-2.0 theme engine
-gtk2-engines-pixbuf # pixbuf-based theme for GTK+ 2.x
 gtk2-engines-qtcurve # This is a set of widget styles for Gtk2 based apps
 gtk2-engines-xfce # GTK+-2.0 theme engine for Xfce
 gvfs # userspace virtual filesystem - GIO module
@@ -54,13 +53,10 @@ libgnome-keyring0 # GNOME keyring services library
 libgusb2 # GLib wrapper around libusb1
 libpam-gnome-keyring # PAM module to unlock the GNOME keyring upon login
 libusb-1.0-0 # userspace USB programming library
-lightdm-gtk-greeter # simple display manager
+lightdm # simple display manager
 mousepad # simple Xfce oriented text editor
-mplayer # Ultimate Movie Player For Linux
 network-manager-gnome # network management framework (GNOME frontend)
-pavucontrol # PulseAudio Volume Control
 ristretto # lightweight picture-viewer for the Xfce desktop environment
-smplayer # complete front-end for MPlayer and MPlayer2
 thunar # File Manager for Xfce
 thunar-volman # Thunar extension for volumes management
 xfce4-appfinder # Application finder for the Xfce4 Desktop Environment
@@ -77,6 +73,7 @@ xfdesktop4 # xfce desktop background, icons and root menu manager
 xfwm4 # window manager of the Xfce project
 xinit # X server initialisation tool
 xorg # X.Org X Window System
+xscreensaver # Screensaver daemon and frontend for X11
 xserver-xorg-core # Xorg X server - core server
 xserver-xorg-input-all # X.Org X server -- input driver metapackage
 # xserver-xorg-video-all # X.Org X server -- output driver metapackage

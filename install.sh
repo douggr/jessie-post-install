@@ -1,12 +1,13 @@
 #!/bin/bash
-set -e
-
+#
 ### BEGIN INIT INFO
 # Provides:           xfce4-desktop
 # Short-Description:  Create lightweight, portable, self-sufficient desktop
 #                     environment.
 ### END INIT INFO
+set -e
 
+# Require lsb functions
 . /lib/lsb/init-functions
 
 # Fail unless root
@@ -15,10 +16,16 @@ if [ "$(id -u)" != "0" ]; then
   exit 1
 fi
 
+# int do_apt_get(char *commands)
+do_apt_get()
+{
+  debconf-apt-progress --logfile=$1.log -- apt-get -y $@
+}
+
 # void do_install(char *packages)
 do_install()
 {
-  echo "debconf-apt-progress -- apt-get install -q -y ${APT_INSTALL_RECOMENDS} -o APT::Get::AutomaticRemove=true $@"
+  do_apt_get install ${APT_INSTALL_RECOMENDS} -o APT::Get::AutomaticRemove=true $@
 }
 
 # int do_confirm(char *message)
@@ -64,7 +71,7 @@ PACKAGES=(
 
 if do_confirm "Add Oracle Java (JDK and JRE) binaries?"
 then
-  if [ ! -z "$(apt-key list | grep EEA14886)" ]
+  if [ -z "$(apt-key list | grep EEA14886)" ]
   then
     log_begin_msg "Adding Oracle's GPG key"
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886 &>/dev/null
@@ -72,10 +79,7 @@ then
   fi
 
   echo deb http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main\
-    | tee /etc/apt/sources.list.d/webupd8team-java.list
-
-  echo deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main\
-    | tee -a /etc/apt/sources.list.d/webupd8team-java.list
+    > /etc/apt/sources.list.d/webupd8team-java.list
 
   # Accept the Oracle JDK8 license automatically
   echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true
@@ -87,17 +91,17 @@ fi
 
 if do_confirm "Install VirtualBox?"
 then
-  PACKAGES+=(linux-headers-$(uname -r) virtualbox virtualbox-dkms virtualbox-qt)
+  PACKAGES+=(linux-headers-$(uname -r) virtualbox virtualbox-dkms)
 fi
 
 if do_confirm "Install Google Chrome?"
 then
   log_begin_msg "Adding Google's GPG key"
-  wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add -
+  GOOGLE_KEY=$(wget --no-check-certificate -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add -)
   log_end_msg $?
 
-  echo deb deb http://dl.google.com/linux/chrome/deb/ stable main\
-    | tee /etc/apt/sources.list.d/google-chrome.list
+  echo deb http://dl.google.com/linux/chrome/deb/ stable main\
+    > /etc/apt/sources.list.d/google-chrome.list
 
   PACKAGES+=(google-chrome-stable)
 fi
@@ -105,7 +109,7 @@ fi
 if do_confirm "Install Atom text editor?"
 then
   DPKG_ATOM_INSTALL=$(mktemp /tmp/atom.XXXXXXXXXX)
-  wget -c https://atom.io/download/deb -O $DPKG_ATOM_INSTALL
+  wget --no-check-certificate -q -c https://atom.io/download/deb -O $DPKG_ATOM_INSTALL &>/dev/null
 fi
 
 # Configure apt repositories
@@ -139,14 +143,14 @@ deb http://http.debian.net/debian jessie-backports main contrib non-free
 deb http://debian.pop-sc.rnp.br/debian testing main contrib non-free
 # deb-src http://debian.pop-sc.rnp.br/debian testing main contrib non-free
 
-" | tee /etc/apt/sources.list
+" > /etc/apt/sources.list
 
 echo "\
 Package: *
 Pin: release jessie
 Pin-Priority: 900
 
-" | tee /etc/apt/preferences.d/jessie
+" > /etc/apt/preferences.d/jessie
 
 echo "\
 #
@@ -207,23 +211,31 @@ Package: orage xfburn mousepad parole parole-* ristretto
 Pin: release testing
 Pin-Priority: 990
 
-" | tee /etc/apt/preferences.d/xfce412
+" > /etc/apt/preferences.d/xfce412
 
 # Fanyness
 echo
 log_success_msg "Initial configuration is done."
 log_begin_msg "You can add or remove additional packages editing the 'packages' file."
 echo
-do_confirm "Continue?" || exit 1
+
+# More fanyness
+if ! do_confirm "Continue?"
+then
+  log_end_msg 1
+fi
+log_end_msg 0
 
 # Add additional packages
 PACKAGES+=($(cat packages | sed "s/ *#.*//g"))
 
 # Update repositories
+log_begin_msg "Updating repositories."
 apt-get -qq update
+log_end_msg $?
 
 # UPgrade installed files
-apt-get upgrade
+do_apt_get upgrade
 
 # And then...
 do_install ${PACKAGES[@]}
@@ -239,15 +251,15 @@ then
 fi
 
 # Install remainnning packages
-apt-get -f install
+do_apt_get install -f
 
 echo "\
 APT::Install-Recommends false;
 APT::Install-Suggests false;
 
-" | tee /etc/apt/apt.conf.d/00norecommends
+" > /etc/apt/apt.conf.d/00norecommends
 
 # Clean up
-apt-get purge bluetooth bluez busybox $(dpkg --get-selections | grep linux-headers | cut -f 1)
-apt-get autoremove --purge
-apt-get clean
+do_apt_get purge bluetooth bluez busybox $(dpkg --get-selections | grep linux-headers | cut -f 1)
+do_apt_get autoremove --purge
+do_apt_get clean
