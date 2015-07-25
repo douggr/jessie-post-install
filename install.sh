@@ -1,169 +1,253 @@
-#!/bin/sh
-# coding: utf-8
-#
-## INSTALL-SYSTEM -- Command for upgrading and sanitizing a clean Debian system.
-#
-## HOMEPAGE
-#  https://github.com/douggr/jessie-post-install
-#
-## AUTHORS
-#  Douglas Gontijo <https://github.com/douggr>
-#
-## LICENSE
-#  MIT <http://www.opensource.org/licenses/MIT>
-#
-## REQUIRES
-#  root
-#
-## DEPENDENCIES
-#  apt
-#  lsb
-#  dpkg
-#  git
-#  ca-certificates
-#
-## CHANGES
-#  2015-07-11   Initial release.                v0.1 [DG]
-##
+#!/bin/bash
+set -e
 
-## Insert eventual localisation here
-DISPLAY=
-LANGUAGE=en
-LC_ALL=C.UTF-8
-export DISPLAY LANGUAGE LC_ALL
+### BEGIN INIT INFO
+# Provides:           xfce4-desktop
+# Short-Description:  Create lightweight, portable, self-sufficient desktop
+#                     environment.
+### END INIT INFO
 
-## Get lsb functions
 . /lib/lsb/init-functions
 
-## Requires `root`
+# Fail unless root
 if [ "$(id -u)" != "0" ]; then
-	log_failure_msg "Must be run as root"
-	exit 1
+  log_failure_msg "$0 must be run as root"
+  exit 1
 fi
 
-## Check required package
-package_check_install () {
-  log_begin_msg "Checking for $1 "
-  dpkg-query -W -f='${Version}' $1 2>/dev/null
+# void do_install(char *packages)
+do_install()
+{
+  echo "debconf-apt-progress -- apt-get install -q -y ${APT_INSTALL_RECOMENDS} -o APT::Get::AutomaticRemove=true $@"
 }
 
-log_action_msg "Checking for required packages"
+# int do_confirm(char *message)
+do_confirm()
+{
+  echo -n "$@ [Y/n] "
+  read confirm
 
-for PKGNAME in git ca-certificates dpkg apt; do
-  if package_check_install $PKGNAME; then
-    log_success_msg
-  else
-    log_failure_msg
-    exit 1
+  case ${confirm:-y} in
+    Y|y) return 0 ;;
+    *)   return 1 ;;
+  esac
+}
+
+if do_confirm "Would you like to install recommended packages?"; then
+  APT_INSTALL_RECOMENDS="-o APT::Install-Recommends=true"
+fi
+
+# Core packages.
+PACKAGES=(
+  bzip2
+  ca-certificates
+  curl
+  firmware-linux
+  firmware-linux-nonfree
+  lsb-release
+  ntfs-3g
+  openssh-client
+  patch
+  policykit-1
+  rsync
+  secure-delete
+  tlp
+  unzip
+  xz-utils
+)
+
+# Check for Atheros controllers
+[ ! -z "$(lspci | grep Atheros)" ] && PACKAGES+=(firmware-atheros)
+
+# Check for Realtek controllers
+[ ! -z "$(lspci | grep Realtek)" ] && PACKAGES+=(firmware-realtek)
+
+if do_confirm "Add Oracle Java (JDK and JRE) binaries?"
+then
+  if [ ! -z "$(apt-key list | grep EEA14886)" ]
+  then
+    log_begin_msg "Adding Oracle's GPG key"
+    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886 &>/dev/null
+    log_end_msg $?
   fi
-done
 
-ask () {
-  log_begin_msg "$@ [y/n]? "
-  read CONFIRM
-}
+  echo deb http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main\
+    | tee /etc/apt/sources.list.d/webupd8team-java.list
 
-bail () {
-  log_failure_msg && exit 1
-}
+  echo deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main\
+    | tee -a /etc/apt/sources.list.d/webupd8team-java.list
 
-## (command, message)
-run_command () {
-  eval $1 && log_success_msg || bail
-}
+  # Accept the Oracle JDK8 license automatically
+  echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true
+    | /usr/bin/debconf-set-selections
 
-## (command, package, message)
-apt_get () {
-  log_begin_msg "$3"
-
-  eval "apt-get -qq -y $1 $2"
-  if [ "0" != "$?" ]; then
-    log_failure_msg
-    exit 1
-  fi
-  log_success_msg
-}
-
-install_package () {
-  apt_get install $1 "Installing $1"
-}
-
-finish_install () {
-  echo 1024 > /sys/block/sda/queue/read_ahead_kb
-  echo 256  > /sys/block/sda/queue/nr_requests
-
-  apt_get purge "$(dpkg --get-selections | grep blue | cut -f 1) busybox -qq" "Cleaning up"
-  apt_get autoremove "--purge" "Cleaning unused packages"
-  apt-get clean
-
-  exit $?
-}
-
-## Begin the magic
-cp -R etc/apt/* /etc/apt/
-
-LAUNCHPADKEY="EEA14886"
-LAUNCHPADCKH=$(apt-key list | grep $LAUNCHPADKEY)
-if [ "0" != "$?" ]; then
-  apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys $LAUNCHPADKEY
+  # Finally append the package
+  PACKAGES+=(oracle-java8-installer)
 fi
 
-if ! package_check_install deb-multimedia-keyring; then
-	wget http://www.deb-multimedia.org/pool/main/d/deb-multimedia-keyring/deb-multimedia-keyring_2015.6.1_all.deb
+if do_confirm "Install VirtualBox?"
+then
+  PACKAGES+=(linux-headers-$(uname -r) virtualbox virtualbox-dkms virtualbox-qt)
 fi
 
-apt_get update "" "Updating apt sources and settings"
-apt_get upgrade "" "Upgrading installed packages"
+if do_confirm "Install Google Chrome?"
+then
+  log_begin_msg "Adding Google's GPG key"
+  wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add -
+  log_end_msg $?
 
-## Install base libraries
-for PACKAGE in $(cat packages/base | grep -v '#'); do
-  install_package $PACKAGE
-done
+  echo deb deb http://dl.google.com/linux/chrome/deb/ stable main\
+    | tee /etc/apt/sources.list.d/google-chrome.list
 
-## build-essential
-echo "build-essential is used by a variety of node and ruby packages"
-ask "Would you like to add build-essential"
-if [ "$CONFIRM" = "y" ]; then
-  install_package build-essential
+  PACKAGES+=(google-chrome-stable)
 fi
 
-## java
-ask "Would you like to install java packages"
-if [ "$CONFIRM" = "y" ]; then
-  echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections
-  install_package oracle-java8-installer
+if do_confirm "Install Atom text editor?"
+then
+  DPKG_ATOM_INSTALL=$(mktemp /tmp/atom.XXXXXXXXXX)
+  wget -c https://atom.io/download/deb -O $DPKG_ATOM_INSTALL
 fi
 
-ask "Would you like to install Xfce packages"
-if [ "$CONFIRM" != "y" ]; then
-  finish_install
+# Configure apt repositories
+echo "\
+#
+# Debian “jessie”
+# https://debian.org/releases/stable/releasenotes
+
+deb http://httpredir.debian.org/debian jessie main contrib non-free
+# deb-src http://httpredir.debian.org/debian jessie main contrib non-free
+
+deb http://security.debian.org/ jessie/updates main contrib non-free
+# deb-src http://security.debian.org jessie/updates main contrib non-free
+
+deb http://httpredir.debian.org/debian jessie-updates main contrib non-free
+# deb-src http://httpredir.debian.org/debian jessie-updates main contrib non-free
+
+#
+# Backports cannot be tested as extensively as Debian stable, and backports are
+# provided on an as-is basis, with risk of incompatibilities with other
+# components in Debian stable. Use with care!
+
+deb http://http.debian.net/debian jessie-backports main contrib non-free
+# deb-src http://http.debian.net/debian jessie-backports main contrib non-free
+
+#
+# Please note that security updates for 'testing' distribution are not yet
+# managed by the security team. Hence, 'testing' does not get security updates
+# in a timely manner.
+
+deb http://debian.pop-sc.rnp.br/debian testing main contrib non-free
+# deb-src http://debian.pop-sc.rnp.br/debian testing main contrib non-free
+
+" | tee /etc/apt/sources.list
+
+echo "\
+Package: *
+Pin: release jessie
+Pin-Priority: 900
+
+" | tee /etc/apt/preferences.d/jessie
+
+echo "\
+#
+# XFCE 4.12 (only in testing as of 2015 July)
+
+# If used with tasksel
+Package: tasksel tasksel-* task-*
+Pin: release testing
+Pin-Priority: 990
+
+# Main Files, Development Tools and Plugins
+Package: xfce4 xfce4-* xfce-* xfswitch-plugin
+Pin: release testing
+Pin-Priority: 990
+
+# Configuration Manager
+Package: xfconf libxfconf*
+Pin: release testing
+Pin-Priority: 990
+
+# Menu Library (garcon)
+Package: libgarcon*
+Pin: release testing
+Pin-Priority: 990
+
+# Extension Library (exo)
+Package: exo-utils exo-utils-dbg libexo-*
+Pin: release testing
+Pin-Priority: 990
+
+# Widget Library and Utility Library
+Package: libxfce4panel-* libxfce4ui-* libxfcegui4-* libxfce4util*
+Pin: release testing
+Pin-Priority: 990
+
+# File Manager
+Package: thunar thunar-* libthunar*
+Pin: release testing
+Pin-Priority: 990
+
+# Desktop and Window Managers
+Package: xfdesktop4 xfdesktop4-* xfwm4 xfwm4-*
+Pin: release testing
+Pin-Priority: 990
+
+# Theme Engines
+Package: gtk2-engines-* gtk3-engines-*
+Pin: release testing
+Pin-Priority: 990
+
+# Thumbnail Generator (tumbler)
+Package: tumbler tumbler-* libtumbler-*
+Pin: release testing
+Pin-Priority: 990
+
+# Applications
+Package: orage xfburn mousepad parole parole-* ristretto
+Pin: release testing
+Pin-Priority: 990
+
+" | tee /etc/apt/preferences.d/xfce412
+
+# Fanyness
+echo
+log_success_msg "Initial configuration is done."
+log_begin_msg "You can add or remove additional packages editing the 'packages' file."
+echo
+do_confirm "Continue?" || exit 1
+
+# Add additional packages
+PACKAGES+=($(cat packages | sed "s/ *#.*//g"))
+
+# Update repositories
+apt-get -qq update
+
+# UPgrade installed files
+apt-get upgrade
+
+# And then...
+do_install ${PACKAGES[@]}
+
+# Log installed packages
+echo ${PACKAGES[@]} > packages.log
+
+# Install Atom text editor
+if [ ! -z "$DPKG_ATOM_INSTALL" ]
+then
+  dpkg -i $DPKG_ATOM_INSTALL
+  echo atom >> packages.log
 fi
 
-for PACKAGE in $(cat packages/xfce | grep -v '#'); do
-  install_package $PACKAGE
-done
+# Install remainnning packages
+apt-get -f install
 
-ask "Would you like to install Google Chrome over Chromium"
-if [ "$CONFIRM" = "y" ]; then
-  log_begin_msg "Downloading google-chrome-stable_current_amd64.deb"
-  wget -q \
-    https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
-    -O /tmp/chrome.deb
-  log_success_msg
+echo "\
+APT::Install-Recommends false;
+APT::Install-Suggests false;
 
-  run_command "dpkg -i /tmp/chrome.deb" "Installing Google Chrome"
-else
-  install_package chromium
-fi
+" | tee /etc/apt/apt.conf.d/00norecommends
 
-ask "Install VirtualBox"
-if [ "$CONFIRM" != "y" ]; then
-  finish_install
-fi
-
-install_package linux-headers-$(uname -r|sed 's,[^-]*-[^-]*-,,')
-install_package virtualbox
-install_package virtualbox-dkms
-install_package virtualbox-qt
-
-finish_install
+# Clean up
+apt-get purge bluetooth bluez busybox $(dpkg --get-selections | grep linux-headers | cut -f 1)
+apt-get autoremove --purge
+apt-get clean

@@ -1,0 +1,84 @@
+# Base system packages
+alsa-utils # Utilities for configuring and using ALSA
+bash-completion # programmable completion for the bash shell
+bc # GNU bc arbitrary precision calculator language
+build-essential # Informational list of build-essential packages
+colordiff # tool to colorize 'diff' output
+docker.io # Linux container runtime
+git # fast, scalable, distributed revision control system
+htop # interactive processes viewer
+network-manager # network management framework (daemon and userspace tools)
+openssh-server # secure shell (SSH) server, for secure access from remote machines
+pulseaudio # PulseAudio sound server
+subversion # Advanced version control system
+usbmuxd # USB multiplexor daemon for iPhone and iPod Touch devices
+usbutils # Linux USB utilities
+
+# XOrg packages
+chromium # web browser
+desktop-base # common files for the Debian Desktop
+dmz-cursor-theme # Style neutral, scalable cursor theme
+faenza-icon-theme # Faenza icon theme
+fonts-roboto # sans-serif font family released with Android Ice Cream Sandwich
+gconf-service # GNOME configuration database system (D-Bus service)
+gconf2 # GNOME configuration database system (support tools)
+gconf2-common # GNOME configuration database system (common files)
+gdebi-core # simple tool to install deb files
+gir1.2-freedesktop # Introspection data for some FreeDesktop components
+gir1.2-gnomekeyring-1.0 # GNOME keyring services library - introspection data
+gir1.2-notify-0.7 # sends desktop notifications to a notification daemon (Introspection files)
+glib-networking # network-related giomodules for GLib
+glib-networking-common # network-related giomodules for GLib - data files
+glib-networking-services # network-related giomodules for GLib - D-Bus services
+gnome-keyring # GNOME keyring services (daemon and tools)
+gstreamer0.10-alsa # GStreamer plugin for ALSA
+gstreamer0.10-plugins-base # GStreamer plugins from the "base" set
+gstreamer1.0-plugins-base # GStreamer plugins from the "base" set
+gstreamer1.0-plugins-good # GStreamer plugins from the "good" set
+gstreamer1.0-plugins-ugly # GStreamer plugins from the "ugly" set
+gstreamer1.0-x # GStreamer plugins for X11 and Pango
+gtk2-engines-murrine # cairo-based gtk+-2.0 theme engine
+gtk2-engines-pixbuf # pixbuf-based theme for GTK+ 2.x
+gtk2-engines-qtcurve # This is a set of widget styles for Gtk2 based apps
+gtk2-engines-xfce # GTK+-2.0 theme engine for Xfce
+gvfs # userspace virtual filesystem - GIO module
+gvfs-bin # userspace virtual filesystem - binaries
+gvfs-common # userspace virtual filesystem - common data files
+gvfs-daemons # userspace virtual filesystem - servers
+gvfs-libs # userspace virtual filesystem - private libraries
+iceweasel # Web browser based on Firefox
+libappindicator1 # allow applications to export a menu into the panel
+libgl1-mesa-dri # free implementation of the OpenGL API -- DRI modules
+libgnome-keyring-common # GNOME keyring services library - data files
+libgnome-keyring0 # GNOME keyring services library
+libgusb2 # GLib wrapper around libusb1
+libpam-gnome-keyring # PAM module to unlock the GNOME keyring upon login
+libusb-1.0-0 # userspace USB programming library
+lightdm-gtk-greeter # simple display manager
+mousepad # simple Xfce oriented text editor
+mplayer # Ultimate Movie Player For Linux
+network-manager-gnome # network management framework (GNOME frontend)
+pavucontrol # PulseAudio Volume Control
+ristretto # lightweight picture-viewer for the Xfce desktop environment
+smplayer # complete front-end for MPlayer and MPlayer2
+thunar # File Manager for Xfce
+thunar-volman # Thunar extension for volumes management
+xfce4-appfinder # Application finder for the Xfce4 Desktop Environment
+xfce4-datetime-plugin # date and time plugin for the Xfce4 panel
+xfce4-mixer # Xfce mixer application
+xfce4-notifyd # simple, visually-appealing notification daemon for Xfce
+xfce4-panel # panel for Xfce4 desktop environment
+xfce4-power-manager # power manager for Xfce desktop
+xfce4-screenshooter # screenshots utility for Xfce
+xfce4-session # Xfce4 Session Manager
+xfce4-terminal # Xfce terminal emulator
+xfce4-volumed # volume keys daemon
+xfdesktop4 # xfce desktop background, icons and root menu manager
+xfwm4 # window manager of the Xfce project
+xinit # X server initialisation tool
+xorg # X.Org X Window System
+xserver-xorg-core # Xorg X server - core server
+xserver-xorg-input-all # X.Org X server -- input driver metapackage
+# xserver-xorg-video-all # X.Org X server -- output driver metapackage
+xserver-xorg-video-ati # X.Org X server -- AMD/ATI display driver wrapper
+xserver-xorg-video-intel # X.Org X server -- Intel i8xx, i9xx display driver
