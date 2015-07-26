@@ -14,7 +14,7 @@ subversion # Advanced version control system
 usbmuxd # USB multiplexor daemon for iPhone and iPod Touch devices
 usbutils # Linux USB utilities
 
-# XOrg packages
+# XOrg and Xfce4 related packages
 chromium # web browser
 desktop-base # common files for the Debian Desktop
 dmz-cursor-theme # Style neutral, scalable cursor theme
@@ -76,6 +76,7 @@ xorg # X.Org X Window System
 xscreensaver # Screensaver daemon and frontend for X11
 xserver-xorg-core # Xorg X server - core server
 xserver-xorg-input-all # X.Org X server -- input driver metapackage
-# xserver-xorg-video-all # X.Org X server -- output driver metapackage
-xserver-xorg-video-ati # X.Org X server -- AMD/ATI display driver wrapper
-xserver-xorg-video-intel # X.Org X server -- Intel i8xx, i9xx display driver
+# You'd better choose your driver than video-all here
+xserver-xorg-video-all # X.Org X server -- output driver metapackage
+# xserver-xorg-video-ati # X.Org X server -- AMD/ATI display driver wrapper
+# xserver-xorg-video-intel # X.Org X server -- Intel i8xx, i9xx display driver
