@@ -129,8 +129,8 @@ fi
 if do_confirm "Install Atom text editor?"
 then
   DPKG_ATOM_INSTALL=$(mktemp /tmp/atom.XXXXXXXXXX)
-  log_begin_msg "Downloading Atom package"
-  do_wget https://atom.io/download/deb -O $DPKG_ATOM_INSTALL &>/dev/null
+  log_begin_msg "Downloading Atom package (this can take a while)"
+  do_wget https://atom.io/download/deb -O $DPKG_ATOM_INSTALL
   log_end_msg $?
 fi
 
