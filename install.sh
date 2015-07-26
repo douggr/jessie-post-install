@@ -41,14 +41,17 @@ do_install()
 # int do_confirm(char *message)
 do_confirm()
 {
-  echo -n "$@ [Y/n] "
-  read confirm
+  read -p "$@ [Y/n] " confirm
 
   case ${confirm:-y} in
     Y|y) return 0 ;;
     *)   return 1 ;;
   esac
 }
+
+do_confirm "Foi?"
+
+exit 1
 
 if do_confirm "Would you like to install recommended packages?"; then
   APT_INSTALL_RECOMENDS="-o APT::Install-Recommends=true"

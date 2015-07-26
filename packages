@@ -2,7 +2,7 @@
 alsa-utils # Utilities for configuring and using ALSA
 bash-completion # programmable completion for the bash shell
 bc # GNU bc arbitrary precision calculator language
-# build-essential # Informational list of build-essential packages
+build-essential # Informational list of build-essential packages
 colordiff # tool to colorize 'diff' output
 # docker.io # Linux container runtime
 git # fast, scalable, distributed revision control system
