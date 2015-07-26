@@ -63,7 +63,6 @@ PACKAGES=(
   firmware-linux
   firmware-linux-nonfree
   insserv
-  kexec-tools
   lsb-release
   ntfs-3g
   openssh-client
@@ -299,13 +298,12 @@ sed -i 's/USERGROUPS=yes/USERGROUPS=no/' /etc/adduser.conf
 
 ## Some general enhancements
 dpkg-reconfigure dash
-dpkg-reconfigure kexec-tools
 dpkg-reconfigure insserv
 
 echo MOZ_DISABLE_PANGO=1 > /etc/environment
 echo 1024 > /sys/block/sda/queue/read_ahead_kb
 echo 256  > /sys/block/sda/queue/nr_requests
-touch /etc/readahead/profile-once
+# touch /etc/readahead.d/profile-once
 
 # Disks tuning
 ROOT_FS=$(df / | grep /dev | awk '{print $1}')

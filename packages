@@ -2,24 +2,39 @@
 alsa-utils # Utilities for configuring and using ALSA
 bash-completion # programmable completion for the bash shell
 bc # GNU bc arbitrary precision calculator language
-build-essential # Informational list of build-essential packages
+# build-essential # Informational list of build-essential packages
 colordiff # tool to colorize 'diff' output
-docker.io # Linux container runtime
+# docker.io # Linux container runtime
 git # fast, scalable, distributed revision control system
 htop # interactive processes viewer
-network-manager # network management framework (daemon and userspace tools)
+# network-manager # network management framework (daemon and userspace tools)
 openssh-server # secure shell (SSH) server, for secure access from remote machines
-pulseaudio # PulseAudio sound server
+# pulseaudio # PulseAudio sound server
 subversion # Advanced version control system
 usbmuxd # USB multiplexor daemon for iPhone and iPod Touch devices
 usbutils # Linux USB utilities
 
-# XOrg and Xfce4 related packages
+# Desktop packages
+# Beautiful fonts
+fonts-roboto
+fonts-dejavu
+fonts-droid
+fonts-liberation
+fonts-oxygen
+
+# Browsers
 chromium # web browser
-desktop-base # common files for the Debian Desktop
+iceweasel # Web browser based on Firefox
+
+# Add some fancyness
 dmz-cursor-theme # Style neutral, scalable cursor theme
 faenza-icon-theme # Faenza icon theme
-fonts-roboto # sans-serif font family released with Android Ice Cream Sandwich
+gtk2-engines-murrine # cairo-based gtk+-2.0 theme engine
+gtk2-engines-qtcurve # This is a set of widget styles for Gtk2 based apps
+gtk2-engines-xfce # GTK+-2.0 theme engine for Xfce
+
+# Base desktop
+desktop-base # common files for the Debian Desktop
 gconf-service # GNOME configuration database system (D-Bus service)
 gconf2 # GNOME configuration database system (support tools)
 gconf2-common # GNOME configuration database system (common files)
@@ -37,15 +52,11 @@ gstreamer1.0-plugins-base # GStreamer plugins from the "base" set
 gstreamer1.0-plugins-good # GStreamer plugins from the "good" set
 gstreamer1.0-plugins-ugly # GStreamer plugins from the "ugly" set
 gstreamer1.0-x # GStreamer plugins for X11 and Pango
-gtk2-engines-murrine # cairo-based gtk+-2.0 theme engine
-gtk2-engines-qtcurve # This is a set of widget styles for Gtk2 based apps
-gtk2-engines-xfce # GTK+-2.0 theme engine for Xfce
 gvfs # userspace virtual filesystem - GIO module
 gvfs-bin # userspace virtual filesystem - binaries
 gvfs-common # userspace virtual filesystem - common data files
 gvfs-daemons # userspace virtual filesystem - servers
 gvfs-libs # userspace virtual filesystem - private libraries
-iceweasel # Web browser based on Firefox
 libappindicator1 # allow applications to export a menu into the panel
 libgl1-mesa-dri # free implementation of the OpenGL API -- DRI modules
 libgnome-keyring-common # GNOME keyring services library - data files
@@ -76,6 +87,7 @@ xorg # X.Org X Window System
 xscreensaver # Screensaver daemon and frontend for X11
 xserver-xorg-core # Xorg X server - core server
 xserver-xorg-input-all # X.Org X server -- input driver metapackage
+
 # You'd better choose your driver than video-all here
 xserver-xorg-video-all # X.Org X server -- output driver metapackage
 # xserver-xorg-video-ati # X.Org X server -- AMD/ATI display driver wrapper
