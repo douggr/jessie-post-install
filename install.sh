@@ -5,6 +5,10 @@
 # Short-Description:  Create lightweight, portable, self-sufficient desktop
 #                     environment.
 ### END INIT INFO
+#
+# wget --no-check-certificate -O install.sh http://git.io/vYz9n
+# wget --no-check-certificate -O packages http://git.io/vYz9C
+#
 set -e
 
 # Require lsb functions
@@ -125,7 +129,9 @@ fi
 if do_confirm "Install Atom text editor?"
 then
   DPKG_ATOM_INSTALL=$(mktemp /tmp/atom.XXXXXXXXXX)
+  log_begin_msg "Downloading Atom package"
   do_wget https://atom.io/download/deb -O $DPKG_ATOM_INSTALL &>/dev/null
+  log_end_msg $?
 fi
 
 # Add deb-multimedia repositories
@@ -133,7 +139,7 @@ if do_confirm "Add deb-multimedia repositories?"
 then
   log_begin_msg "Adding deb-multimedia's keyring"
   do_wget http://www.deb-multimedia.org/pool/main/d/deb-multimedia-keyring/deb-multimedia-keyring_2015.6.1_all.deb &>/dev/null
-  debconf-apt-progress -- dpkg -i deb-multimedia-keyring_2015.6.1_all.deb
+  dpkg -i deb-multimedia-keyring_2015.6.1_all.deb &>/dev/null
   log_end_msg $?
 
   echo deb http://www.deb-multimedia.org jessie main non-free\
