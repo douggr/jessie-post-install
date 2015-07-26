@@ -2,7 +2,7 @@
 **How?**
 
 1. Install a clean Debian Jessie system
-  - Unmark all options in the package selection list
+  - Unmark **all** options in the package selection list
 2. Log in as `root` and run:
   ```shell
   wget --no-check-certificate -O install.sh http://git.io/vYz9n
