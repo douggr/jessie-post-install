@@ -22,6 +22,12 @@ do_apt_get()
   debconf-apt-progress --logfile=$1.log -- apt-get -y $@
 }
 
+# int do_wget(char *params)
+do_wget()
+{
+  wget -q -c --no-check-certificate $@ &>/dev/null
+}
+
 # void do_install(char *packages)
 do_install()
 {
@@ -69,6 +75,7 @@ PACKAGES=(
 # Check for Realtek controllers
 [ ! -z "$(lspci | grep Realtek)" ] && PACKAGES+=(firmware-realtek)
 
+# Add Oracle repositories
 if do_confirm "Add Oracle Java (JDK and JRE) binaries?"
 then
   if [ -z "$(apt-key list | grep EEA14886)" ]
@@ -94,11 +101,16 @@ then
   PACKAGES+=(linux-headers-$(uname -r) virtualbox virtualbox-dkms)
 fi
 
+# Add google repositories
 if do_confirm "Install Google Chrome?"
 then
-  log_begin_msg "Adding Google's GPG key"
-  GOOGLE_KEY=$(wget --no-check-certificate -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add -)
-  log_end_msg $?
+  if [ -z "$(apt-key list | grep Google)" ]
+  then
+    log_begin_msg "Adding Google's GPG key"
+    do_wget https://dl.google.com/linux/linux_signing_key.pub
+    apt-key add linux_signing_key.pub
+    log_end_msg $?
+  fi
 
   echo deb http://dl.google.com/linux/chrome/deb/ stable main\
     > /etc/apt/sources.list.d/google-chrome.list
@@ -109,7 +121,19 @@ fi
 if do_confirm "Install Atom text editor?"
 then
   DPKG_ATOM_INSTALL=$(mktemp /tmp/atom.XXXXXXXXXX)
-  wget --no-check-certificate -q -c https://atom.io/download/deb -O $DPKG_ATOM_INSTALL &>/dev/null
+  do_wget https://atom.io/download/deb -O $DPKG_ATOM_INSTALL &>/dev/null
+fi
+
+# Add deb-multimedia repositories
+if do_confirm "Add deb-multimedia repositories?"
+then
+  log_begin_msg "Adding deb-multimedia's keyring"
+  do_wget http://www.deb-multimedia.org/pool/main/d/deb-multimedia-keyring/deb-multimedia-keyring_2015.6.1_all.deb &>/dev/null
+  debconf-apt-progress -- dpkg -i deb-multimedia-keyring_2015.6.1_all.deb
+  log_end_msg $?
+
+  echo deb http://www.deb-multimedia.org jessie main non-free\
+    > /etc/apt/sources.list.d/deb-multimedia.list
 fi
 
 # Configure apt repositories
@@ -211,7 +235,7 @@ Package: orage xfburn mousepad parole parole-* ristretto
 Pin: release testing
 Pin-Priority: 990
 
-" > /etc/apt/preferences.d/xfce412
+" > /etc/apt/preferences.d/xfce
 
 # Fanyness
 echo
@@ -240,14 +264,10 @@ do_apt_get upgrade
 # And then...
 do_install ${PACKAGES[@]}
 
-# Log installed packages
-echo ${PACKAGES[@]} > packages.log
-
 # Install Atom text editor
 if [ ! -z "$DPKG_ATOM_INSTALL" ]
 then
-  dpkg -i $DPKG_ATOM_INSTALL
-  echo atom >> packages.log
+  debconf-apt-progress -- dpkg -i $DPKG_ATOM_INSTALL
 fi
 
 # Install remainnning packages
@@ -260,6 +280,6 @@ APT::Install-Suggests false;
 " > /etc/apt/apt.conf.d/00norecommends
 
 # Clean up
-do_apt_get purge bluetooth bluez busybox $(dpkg --get-selections | grep linux-headers | cut -f 1)
+do_apt_get purge bluetooth bluez busybox $(dpkg --get-selections | grep -E 'linux-headers|\-dev' | cut -f 1)
 do_apt_get autoremove --purge
 do_apt_get clean
