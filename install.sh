@@ -116,6 +116,7 @@ then
     log_begin_msg "Adding Google's GPG key"
     do_wget https://dl.google.com/linux/linux_signing_key.pub
     apt-key add linux_signing_key.pub
+    rm -f linux_signing_key.pub
     log_end_msg $?
   fi
 
@@ -127,8 +128,8 @@ fi
 
 if do_confirm "Install Atom text editor?"
 then
-  DPKG_ATOM_INSTALL=$(mktemp /tmp/atom.XXXXXXXXXX)
-  log_begin_msg "Downloading Atom package (this can take a while)"
+  DPKG_ATOM_INSTALL="atom.deb"
+  log_begin_msg "Downloading Atom package (~70MB this can take a while)"
   do_wget https://atom.io/download/deb -O $DPKG_ATOM_INSTALL
   log_end_msg $?
 fi
@@ -247,17 +248,9 @@ Pin-Priority: 990
 " > /etc/apt/preferences.d/xfce
 
 # Fanyness
-echo
 log_success_msg "Initial configuration is done."
-log_begin_msg "You can add or remove additional packages editing the 'packages' file."
-echo
-
-# More fanyness
-if ! do_confirm "Continue?"
-then
-  log_end_msg 1
-fi
-log_end_msg 0
+echo "You can add or remove additional packages editing the 'packages' file."
+do_confirm "Continue?" || exit 1
 
 # Add additional packages
 PACKAGES+=($(cat packages | sed "s/ *#.*//g"))
@@ -276,7 +269,11 @@ do_install ${PACKAGES[@]}
 # Install Atom text editor
 if [ ! -z "$DPKG_ATOM_INSTALL" ]
 then
-  debconf-apt-progress -- dpkg -i $DPKG_ATOM_INSTALL
+  log_begin_msg "Installing Atom text editor"
+  dpkg -i $DPKG_ATOM_INSTALL &>/dev/null
+  log_end_msg $?
+
+  rm -f $DPKG_ATOM_INSTALL
 fi
 
 # Install remainnning packages
