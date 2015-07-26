@@ -55,6 +55,7 @@ PACKAGES=(
   bzip2
   ca-certificates
   curl
+  dracut
   firmware-linux
   firmware-linux-nonfree
   insserv
@@ -311,4 +312,9 @@ tune2fs -O dir_index /dev/sda1
 log_progress_msg reserved-blocks
 tune2fs -m 0 /dev/sda1
 
+log_end_msg $?
+
+# Reconfigure the linux image
+log_begin_msg "Optimizing initrd.img and vmlinuz"
+dracut -f &>/dev/null
 log_end_msg $?
