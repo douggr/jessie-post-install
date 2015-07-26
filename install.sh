@@ -304,13 +304,13 @@ touch /etc/readahead/profile-once
 # Disks tuning
 ROOT_FS=$(df / | grep /dev | awk '{print $1}')
 log_begin_msg "Tuning disks: journal_data_writeback"
-tune2fs -o journal_data_writeback /dev/sda1
+tune2fs -o journal_data_writeback $ROOT_FS
 
 log_progress_msg dir_index
-tune2fs -O dir_index /dev/sda1
+tune2fs -O dir_index $ROOT_FS
 
 log_progress_msg reserved-blocks
-tune2fs -m 0 /dev/sda1
+tune2fs -m 0 $ROOT_FS
 
 log_end_msg $?
 
