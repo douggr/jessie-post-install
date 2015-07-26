@@ -57,11 +57,14 @@ PACKAGES=(
   curl
   firmware-linux
   firmware-linux-nonfree
+  insserv
+  kexec-tools
   lsb-release
   ntfs-3g
   openssh-client
   patch
   policykit-1
+  readahead
   rsync
   secure-delete
   tlp
@@ -283,3 +286,29 @@ APT::Install-Suggests false;
 do_apt_get purge bluetooth bluez busybox $(dpkg --get-selections | grep -E 'linux-headers|\-dev' | cut -f 1)
 do_apt_get autoremove --purge
 do_apt_get clean
+
+# Each created user will be placed in the group whose gid is 100 (users)
+sed -i 's/USERGROUPS=yes/USERGROUPS=no/' /etc/adduser.conf
+
+## Some general enhancements
+dpkg-reconfigure dash
+dpkg-reconfigure kexec-tools
+dpkg-reconfigure insserv
+
+echo MOZ_DISABLE_PANGO=1 > /etc/environment
+echo 1024 > /sys/block/sda/queue/read_ahead_kb
+echo 256  > /sys/block/sda/queue/nr_requests
+touch /etc/readahead/profile-once
+
+# Disks tuning
+ROOT_FS=$(df / | grep /dev | awk '{print $1}')
+log_begin_msg "Tuning disks: journal_data_writeback"
+tune2fs -o journal_data_writeback /dev/sda1
+
+log_progress_msg dir_index
+tune2fs -O dir_index /dev/sda1
+
+log_progress_msg reserved-blocks
+tune2fs -m 0 /dev/sda1
+
+log_end_msg $?
