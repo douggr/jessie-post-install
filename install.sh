@@ -93,7 +93,7 @@ then
     > /etc/apt/sources.list.d/webupd8team-java.list
 
   # Accept the Oracle JDK8 license automatically
-  echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true
+  echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true\
     | /usr/bin/debconf-set-selections
 
   # Finally append the package
