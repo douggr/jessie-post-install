@@ -49,10 +49,6 @@ do_confirm()
   esac
 }
 
-do_confirm "Foi?"
-
-exit 1
-
 if do_confirm "Would you like to install recommended packages?"; then
   APT_INSTALL_RECOMENDS="-o APT::Install-Recommends=true"
 fi
@@ -322,3 +318,9 @@ log_end_msg $?
 log_begin_msg "Optimizing initrd.img and vmlinuz"
 dracut -f &>/dev/null
 log_end_msg $?
+
+# Reboot
+if do_confirm "You need to reboot your system. Would you like to reboot now?"
+then
+  reboot
+fi
